@@ -15,7 +15,7 @@
 Summary:	The Jack Audio Connection Kit
 Name:		jackit
 Version:	0.103.0
-Release:	%mkrel 0.20070314.2
+Release:	%mkrel 0.20070314.3
 License:	GPL
 Group:		System/Servers
 Source0:	jackit-20070314.tar.bz2
