@@ -14,11 +14,11 @@
 %define		lib_name_devel%mklibname jack %{lib_major} -d
 Summary:	The Jack Audio Connection Kit
 Name:		jackit
-Version:	0.103.0
-Release:	%mkrel 0.20070314.3
+Version:	0.107.2
+Release:	%mkrel 0.1051.1
 License:	GPL
 Group:		System/Servers
-Source0:	jackit-20070314.tar.bz2
+Source0:	jackit-1051.tar.bz2
 Patch1:		jack-driver-inline.patch
 URL:		http://jackit.sourceforge.net
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
@@ -141,9 +141,11 @@ rm -rf $RPM_BUILD_ROOT
 %files example-clients
 %defattr(-,root,root)
 %{_bindir}/jackrec
+%{_bindir}/jack_alias
 %{_bindir}/jack_bufsize
 %{_bindir}/jack_connect
 %{_bindir}/jack_disconnect
+%{_bindir}/jack_evmon
 %{_bindir}/jack_freewheel
 %{_bindir}/jack_impulse_grabber
 %{_bindir}/jack_lsp
@@ -158,5 +160,3 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/jack_midisine
 %{_libdir}/jack/inprocess.so
 %{_libdir}/jack/intime.so
-
-
