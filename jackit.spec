@@ -8,17 +8,19 @@
 %define enable_optimization 0
 %{?_with_optimization: %{expand: %%define enable_optimization 1}}
 
+%define svn_rev 1070
+
 %define		lib_name_orig libjack
 %define		lib_major 0
 %define		lib_name %mklibname jack %{lib_major} 
 %define		lib_name_devel%mklibname jack %{lib_major} -d
 Summary:	The Jack Audio Connection Kit
 Name:		jackit
-Version:	0.107.2
-Release:	%mkrel 0.1051.1
+Version:	0.107.7
+Release:	%mkrel 0.%{svn_rev}.1
 License:	GPL
 Group:		System/Servers
-Source0:	jackit-1051.tar.bz2
+Source0:	jackit-%{svn_rev}.tar.bz2
 Patch1:		jack-driver-inline.patch
 URL:		http://jackit.sourceforge.net
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
