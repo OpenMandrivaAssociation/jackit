@@ -23,7 +23,6 @@ Group:		System/Servers
 Source0:	jackit-%{svn_rev}.tar.bz2
 Patch1:		jack-driver-inline.patch
 URL:		http://jackit.sourceforge.net
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Buildrequires:	alsa-lib-devel
 Buildrequires:	libsndfile-devel
 BuildRequires:  libglib-devel
