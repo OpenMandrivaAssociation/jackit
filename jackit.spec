@@ -20,6 +20,7 @@ Version:	0.107.7
 Release:	%mkrel 0.%{svn_rev}.1
 License:	GPL
 Group:		System/Servers
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Source0:	jackit-%{svn_rev}.tar.bz2
 Patch1:		jack-driver-inline.patch
 URL:		http://jackit.sourceforge.net
