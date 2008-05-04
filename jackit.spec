@@ -8,7 +8,7 @@
 %define enable_optimization 0
 %{?_with_optimization: %{expand: %%define enable_optimization 1}}
 
-%define svn_rev 1070
+%define svn_rev 1092
 
 %define		lib_name_orig libjack
 %define		lib_major 0
@@ -16,7 +16,7 @@
 %define		lib_name_devel%mklibname jack %{lib_major} -d
 Summary:	The Jack Audio Connection Kit
 Name:		jackit
-Version:	0.107.7
+Version:	0.109.2
 Release:	%mkrel 0.%{svn_rev}.1
 License:	GPL
 Group:		System/Servers
@@ -26,7 +26,7 @@ Patch1:		jack-driver-inline.patch
 URL:		http://jackit.sourceforge.net
 Buildrequires:	alsa-lib-devel
 Buildrequires:	libsndfile-devel
-BuildRequires:  libglib-devel
+BuildRequires:  glib2-devel
 BuildRequires:	libfltk-devel
 Buildrequires:  doxygen
 BuildRequires:  readline-devel
@@ -81,11 +81,11 @@ Requires:	%{name} = %{version}
 Small example clients that use the Jack Audio Connection Kit.
 
 %prep
-%setup -q -n jack
+%setup -q -n jack-audio-connection-kit-%{version}
 #%patch1 -p1 -b .x86_64
 
 %build
-./autogen.sh
+# ./autogen.sh
 %configure2_5x --with-html-dir=%{_docdir} --enable-stripped-jackd --enable-shared --disable-portaudio \
 %if %enable_capabilities
 	--enable-capabilities \
