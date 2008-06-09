@@ -104,8 +104,12 @@ rm -fr $RPM_BUILD_ROOT/%{_docdir}
 rm -f %buildroot%_mandir/man1/jackstart.1
 %endif
 
+%if %mdkversion < 200900
 %post -n %{lib_name} -p /sbin/ldconfig
+%endif
+%if %mdkversion < 200900
 %postun -n %{lib_name} -p /sbin/ldconfig
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
