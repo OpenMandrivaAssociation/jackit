@@ -26,6 +26,7 @@ Patch1:		jack-driver-inline.patch
 URL:		http://jackit.sourceforge.net
 Buildrequires:	alsa-lib-devel
 Buildrequires:	libsndfile-devel
+BuildRequires:	libsamplerate-devel
 BuildRequires:  glib2-devel
 BuildRequires:	libfltk-devel
 Buildrequires:  doxygen
