@@ -8,20 +8,20 @@
 %define enable_optimization 0
 %{?_with_optimization: %{expand: %%define enable_optimization 1}}
 
-%define svn_rev 1092
-
 %define		lib_name_orig libjack
 %define		lib_major 0
 %define		lib_name %mklibname jack %{lib_major} 
-%define		lib_name_devel%mklibname jack %{lib_major} -d
+%define		lib_name_devel %mklibname jack -d
+
 Summary:	The Jack Audio Connection Kit
 Name:		jackit
-Version:	0.109.2
-Release:	%mkrel 2.%{svn_rev}.1
-License:	GPL
+Version:	0.116.1
+Release:	%{mkrel 1}
+# Lib is LGPL, apps are GPL
+License:	LGPLv2+ and GPLv2+
 Group:		System/Servers
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
-Source0:	jackit-%{svn_rev}.tar.bz2
+BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
+Source0:	jack-audio-connection-kit-%{version}.tar.gz
 Patch1:		jack-driver-inline.patch
 URL:		http://jackit.sourceforge.net
 Buildrequires:	alsa-lib-devel
@@ -32,6 +32,7 @@ Buildrequires:  doxygen
 BuildRequires:  readline-devel
 BuildRequires:  ncurses-devel
 BuildRequires:  libtermcap-devel
+BuildRequires:	celt-devel
 %if %enable_capabilities
 BuildRequires:	libcap-devel
 %endif
@@ -67,6 +68,7 @@ Group:		Development/C
 Requires:	%{lib_name} = %{version}
 Provides:	%{lib_name_orig}-devel = %{version}-%{release}
 Provides:	%{name}-devel = %{version}-%{release} 
+Obsoletes:	%{mklibname jack 0 -d}
 Requires:	pkgconfig
 
 %description -n	%{lib_name_devel}
@@ -99,9 +101,9 @@ Small example clients that use the Jack Audio Connection Kit.
 %install
 rm -rf %buildroot
 %{makeinstall_std}
-rm -fr $RPM_BUILD_ROOT/%{_docdir}
+rm -fr %{buildroot}/%{_docdir}
 %if ! %enable_capabilities
-rm -f %buildroot%_mandir/man1/jackstart.1
+rm -f %buildroot%{_mandir}/man1/jackstart.1
 %endif
 
 %if %mdkversion < 200900
@@ -112,7 +114,7 @@ rm -f %buildroot%_mandir/man1/jackstart.1
 %endif
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 %files 
 %defattr(-,root,root)
@@ -122,16 +124,21 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/jackstart.1*
 %endif
 %{_bindir}/jackd
+%{_bindir}/alsa_in
+%{_bindir}/alsa_out
+%{_bindir}/jack_netsource
 %dir %{_libdir}/jack
 %{_libdir}/jack/jack_alsa.so
 %{_libdir}/jack/jack_oss.so
 %{_libdir}/jack/jack_dummy.so
 %{_libdir}/jack/jack_freebob.so
+%{_libdir}/jack/jack_net.so
 %{_mandir}/man1/jackd.1*
 
 %files -n %{lib_name}
 %defattr(-,root,root)
 %{_libdir}/libjack.so.*
+%{_libdir}/libjackserver.so.*
 
 %files -n %{lib_name_devel}
 %defattr(-,root,root)
@@ -148,7 +155,6 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %{_bindir}/jackrec
 %{_bindir}/jack_alias
-%{_bindir}/jack_bufsize
 %{_bindir}/jack_connect
 %{_bindir}/jack_disconnect
 %{_bindir}/jack_evmon
@@ -162,6 +168,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/jack_load
 %{_bindir}/jack_unload
 %{_bindir}/jack_transport
+%{_bindir}/jack_transport_client
 %{_bindir}/jack_midiseq
 %{_bindir}/jack_midisine
 %{_libdir}/jack/inprocess.so
