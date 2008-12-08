@@ -28,7 +28,7 @@ Buildrequires:	alsa-lib-devel
 Buildrequires:	libsndfile-devel
 BuildRequires:	libsamplerate-devel
 BuildRequires:  glib2-devel
-BuildRequires:	libfltk-devel
+BuildRequires:	fltk-devel
 Buildrequires:  doxygen
 BuildRequires:  readline-devel
 BuildRequires:  ncurses-devel
