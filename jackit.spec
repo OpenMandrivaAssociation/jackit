@@ -16,7 +16,7 @@
 Summary:	The Jack Audio Connection Kit
 Name:		jackit
 Version:	0.116.1
-Release:	%{mkrel 1}
+Release:	%mkrel 2
 # Lib is LGPL, apps are GPL
 License:	LGPLv2+ and GPLv2+
 Group:		System/Servers
@@ -71,6 +71,9 @@ Provides:	%{lib_name_orig}-devel = %{version}-%{release}
 Provides:	%{name}-devel = %{version}-%{release} 
 Obsoletes:	%{mklibname jack 0 -d}
 Requires:	pkgconfig
+#gw: libtool deps
+Requires:	libsamplerate-devel
+Requires:  	celt-devel
 
 %description -n	%{lib_name_devel}
 Header files for the Jack Audio Connection Kit.
