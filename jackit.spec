@@ -15,8 +15,8 @@
 
 Summary:	The Jack Audio Connection Kit
 Name:		jackit
-Version:	0.116.1
-Release:	%mkrel 2
+Version:	0.116.2
+Release:	%mkrel 1
 # Lib is LGPL, apps are GPL
 License:	LGPLv2+ and GPLv2+
 Group:		System/Servers
@@ -141,8 +141,8 @@ rm -rf %{buildroot}
 
 %files -n %{lib_name}
 %defattr(-,root,root)
-%{_libdir}/libjack.so.*
-%{_libdir}/libjackserver.so.*
+%{_libdir}/libjack.so.%{lib_major}*
+%{_libdir}/libjackserver.so.%{lib_major}*
 
 %files -n %{lib_name_devel}
 %defattr(-,root,root)
