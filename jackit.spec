@@ -15,14 +15,13 @@
 
 Summary:	The Jack Audio Connection Kit
 Name:		jackit
-Version:	0.116.2
-Release:	%mkrel 3
+Version:	0.118.0
+Release:	%mkrel 1
 # Lib is LGPL, apps are GPL
 License:	LGPLv2+ and GPLv2+
 Group:		System/Servers
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Source0:	jack-audio-connection-kit-%{version}.tar.gz
-Patch1:		jack-driver-inline.patch
 URL:		http://jackit.sourceforge.net
 Buildrequires:	alsa-lib-devel
 Buildrequires:	libsndfile-devel
@@ -88,7 +87,6 @@ Small example clients that use the Jack Audio Connection Kit.
 
 %prep
 %setup -q -n jack-audio-connection-kit-%{version}
-#%patch1 -p1 -b .x86_64
 
 %build
 # ./autogen.sh
@@ -175,5 +173,8 @@ rm -rf %{buildroot}
 %{_bindir}/jack_transport_client
 %{_bindir}/jack_midiseq
 %{_bindir}/jack_midisine
+%{_bindir}/jack_bufsize
+%{_bindir}/jack_samplerate
+%{_bindir}/jack_wait
 %{_libdir}/jack/inprocess.so
 %{_libdir}/jack/intime.so
