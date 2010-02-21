@@ -1,47 +1,51 @@
-# To enable real-time sheduling (SCHED_FIFO), rebuild this package adding
-# '--with realtime'.  This will require a kernel with the capabilities patch
-# and may be a security risk to your system.  Non-root users will be able
-# to run jack with real-time priorities by executing 'jackstart'.
-%define enable_capabilities 0
-%{?_with_realtime: %{expand: %%define enable_capabilities 1}}
+# D-Bus support enabled by default, set flag "--with nodbus" to disable
+%define enable_dbus 1
+%{?_with_nodbus: %{expand: %%define enable_dbus 0}}
 
-%define enable_optimization 0
-%{?_with_optimization: %{expand: %%define enable_optimization 1}}
+# Build classic jackd executable as well
+%define enable_classic 1
+%{?_with_noclassic: %{expand: %%define enable_noclassic 0}}
 
-%define		lib_name_orig libjack
-%define		lib_major 0
-%define		lib_name %mklibname jack %{lib_major} 
-%define		lib_name_devel %mklibname jack -d
+%define     lib_name_orig libjack
+%define     lib_major 0
+%define     lib_name %mklibname jack %{lib_major} 
+%define     lib_name_devel %mklibname jack -d
 
-Summary:	The Jack Audio Connection Kit
-Name:		jackit
-Version:	0.118.0
-Release:	%mkrel 2
+Summary:    The Jack Audio Connection Kit 2
+Name:       jackit
+Version:    1.9.5
+Release:    %mkrel 1
 # Lib is LGPL, apps are GPL
-License:	LGPLv2+ and GPLv2+
-Group:		System/Servers
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
-Source0:	jack-audio-connection-kit-%{version}.tar.gz
-URL:		http://jackit.sourceforge.net
-Buildrequires:	alsa-lib-devel
-Buildrequires:	libsndfile-devel
-BuildRequires:	libsamplerate-devel
+License:    LGPLv2+ and GPLv2+
+Group:      System/Servers
+BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-buildroot
+Source0:    http://www.grame.fr/~letz/jack-%{version}.tar.bz2
+URL:        http://jackaudio.org/
+BuildRequires:  waf
+Buildrequires:  alsa-lib-devel
+Buildrequires:  libsndfile-devel
+BuildRequires:  libsamplerate-devel
 BuildRequires:  glib2-devel
-BuildRequires:	fltk-devel
+BuildRequires:  fltk-devel
 Buildrequires:  doxygen
 BuildRequires:  readline-devel
 BuildRequires:  ncurses-devel
 BuildRequires:  libtermcap-devel
-BuildRequires:	celt-devel
-%if %enable_capabilities
-BuildRequires:	libcap-devel
+BuildRequires:  celt-devel
+BuildRequires:  libraw1394-devel >= 1.2.1
+BuildRequires:  libavc1394-devel
+BuildRequires:  libiec61883-devel >= 1.1.0
+BuildRequires:  libfreebob-devel
+%if %enable_dbus
+BuildRequires:  libdbus-1-devel
+BuildRequires:  libexpat-devel
 %endif
-BuildRequires:	libraw1394-devel >= 1.2.1
-BuildRequires:	libavc1394-devel
-BuildRequires:	libiec61883-devel >= 1.1.0
-BuildRequires:	libfreebob-devel
 
 %description
+This package provides the C++ multiprocessor implementation of the Jack
+Audio Connection Kit (JACK), also known as JACK2. This package comes with
+enabled D-Bus support for JACK2, which is required by the LADI
+session handler.
 JACK is a low-latency audio server, written primarily for the Linux
 operating system. It can connect a number of different applications to
 an audio device, as well as allowing them to share audio between
@@ -54,59 +58,56 @@ designed from the ground up to be suitable for professional audio
 work. This means that it focuses on two key areas: synchronous
 execution of all clients, and low latency operation.
 
-%package -n	%{lib_name}
-Summary:	Library associated with jack kit , needed for jackd
-Group:		System/Libraries
-Requires:	%{name} >= %{version}
+%package -n %{lib_name}
+Summary:    Library associated with jack kit, needed for jackd/jackdbus
+Group:      System/Libraries
+Requires:   %{name} >= %{version}
 
-%description -n	%{lib_name}
+%description -n %{lib_name}
 This library is mandatory for the Jack Audio Connection Kit
 
-%package -n	%{lib_name_devel}
-Summary:	Header files for Jack 
-Group:		Development/C
-Requires:	%{lib_name} = %{version}
-Provides:	%{lib_name_orig}-devel = %{version}-%{release}
-Provides:	%{name}-devel = %{version}-%{release} 
-Obsoletes:	%{mklibname jack 0 -d}
-Requires:	pkgconfig
-#gw: libtool deps
-Requires:	libsamplerate-devel
-Requires:  	celt-devel
+%package -n %{lib_name_devel}
+Summary:    Header files for Jack 
+Group:      Development/C
+Requires:   %{lib_name} = %{version}
+Provides:   %{lib_name_orig}-devel = %{version}-%{release}
+Provides:   %{name}-devel = %{version}-%{release}
+Obsoletes:  %{mklibname jack 0 -d}
+Requires:   pkgconfig
+Requires:   libsamplerate-devel
+Requires:   celt-devel
 
-%description -n	%{lib_name_devel}
+%description -n %{lib_name_devel}
 Header files for the Jack Audio Connection Kit.
 
-%package	example-clients
-Summary:	Example clients that use Jack 
-Group:		Sound
-Requires:	%{name} = %{version}
+%package    example-clients
+Summary:    Example clients that use Jack 
+Group:      Sound
+Requires:   %{name} = %{version}
 
-%description	example-clients
+%description    example-clients
 Small example clients that use the Jack Audio Connection Kit.
 
 %prep
-%setup -q -n jack-audio-connection-kit-%{version}
+%setup -q -n jack-%{version}
 
 %build
-# ./autogen.sh
-%configure2_5x --with-html-dir=%{_docdir} --enable-stripped-jackd --enable-shared --disable-portaudio \
-%if %enable_capabilities
-	--enable-capabilities \
+./waf configure --prefix=%{_prefix} \
+%if %enable_dbus
+    --dbus \
+%if %enable_classic
+    --classic \
 %endif
-%if %enable_optimization
-	--enable-optimize
 %endif
+--doxygen
 
-%make
+./waf
 
 %install
 rm -rf %buildroot
-%{makeinstall_std}
+./waf install --destdir=%{buildroot}
+
 rm -fr %{buildroot}/%{_docdir}
-%if ! %enable_capabilities
-rm -f %buildroot%{_mandir}/man1/jackstart.1
-%endif
 
 %if %mdkversion < 200900
 %post -n %{lib_name} -p /sbin/ldconfig
@@ -120,22 +121,43 @@ rm -rf %{buildroot}
 
 %files 
 %defattr(-,root,root)
-%doc AUTHORS TODO
-%if %enable_capabilities
-%attr(4755,root,root) %{_bindir}/jackstart
-%{_mandir}/man1/jackstart.1*
-%endif
-%{_bindir}/jackd
+%doc README README_NETJACK2
+
+%{_bindir}/jack_zombie
+%{_bindir}/jack_bufsize
+%{_bindir}/jack_rec
+%{_bindir}/jack_test
+%{_bindir}/jack_cpu
+%{_bindir}/jack_server_control
+%{_bindir}/jack_thru
+%{_bindir}/jack_delay
+%{_bindir}/jack_cpu_load
+%{_bindir}/jack_load
+%{_bindir}/jack_unload
+%{_bindir}/jack_monitor_client
+%{_bindir}/jack_connect
+%{_bindir}/jack_disconnect
+%{_bindir}/jack_lsp
+%{_bindir}/jack_freewheel
+%{_bindir}/jack_evmon
+%{_bindir}/jack_alias
 %{_bindir}/alsa_in
 %{_bindir}/alsa_out
 %{_bindir}/jack_netsource
+
+%if %enable_dbus
+%{_bindir}/jackdbus
+%{_datadir}/dbus-1/services/org.jackaudio.service
+%{_bindir}/jack_control
+%if %enable_classic
+%{_bindir}/jackd
+%endif
+%else
+%{_bindir}/jackd
+%endif
+
 %dir %{_libdir}/jack
-%{_libdir}/jack/jack_alsa.so
-%{_libdir}/jack/jack_oss.so
-%{_libdir}/jack/jack_dummy.so
-%{_libdir}/jack/jack_freebob.so
-%{_libdir}/jack/jack_net.so
-%{_mandir}/man1/jackd.1*
+%{_libdir}/jack/*.so
 
 %files -n %{lib_name}
 %defattr(-,root,root)
@@ -144,37 +166,20 @@ rm -rf %{buildroot}
 
 %files -n %{lib_name_devel}
 %defattr(-,root,root)
-%doc doc/reference
+%doc %{_datadir}/jack-audio-connection-kit/reference/html
 %{_includedir}/jack
 %{_libdir}/lib*.so
-#%{_libdir}/lib*.a
-%{_libdir}/lib*.la
 %dir %{_libdir}/jack
-%{_libdir}/jack/*a
 %{_libdir}/pkgconfig/jack.pc
 
 %files example-clients
 %defattr(-,root,root)
-%{_bindir}/jackrec
-%{_bindir}/jack_alias
-%{_bindir}/jack_connect
-%{_bindir}/jack_disconnect
-%{_bindir}/jack_evmon
-%{_bindir}/jack_freewheel
-%{_bindir}/jack_impulse_grabber
-%{_bindir}/jack_lsp
 %{_bindir}/jack_metro
-%{_bindir}/jack_showtime
-%{_bindir}/jack_monitor_client
-%{_bindir}/jack_simple_client
-%{_bindir}/jack_load
-%{_bindir}/jack_unload
-%{_bindir}/jack_transport
-%{_bindir}/jack_transport_client
 %{_bindir}/jack_midiseq
 %{_bindir}/jack_midisine
-%{_bindir}/jack_bufsize
+%{_bindir}/jack_multiple_metro
 %{_bindir}/jack_samplerate
+%{_bindir}/jack_showtime
+%{_bindir}/jack_simple_client
+%{_bindir}/jack_transport
 %{_bindir}/jack_wait
-%{_libdir}/jack/inprocess.so
-%{_libdir}/jack/intime.so
