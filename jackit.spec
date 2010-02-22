@@ -21,7 +21,6 @@ Group:      System/Servers
 BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Source0:    http://www.grame.fr/~letz/jack-%{version}.tar.bz2
 URL:        http://jackaudio.org/
-BuildRequires:  waf
 Buildrequires:  alsa-lib-devel
 Buildrequires:  libsndfile-devel
 BuildRequires:  libsamplerate-devel
