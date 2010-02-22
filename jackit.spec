@@ -93,6 +93,7 @@ Small example clients that use the Jack Audio Connection Kit.
 
 %build
 ./waf configure --prefix=%{_prefix} \
+      		--libdir=/%{_lib} \
 %if %enable_dbus
     --dbus \
 %if %enable_classic
