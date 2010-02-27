@@ -14,7 +14,7 @@
 Summary:    The Jack Audio Connection Kit 2
 Name:       jackit
 Version:    1.9.5
-Release:    %mkrel 1
+Release:    %mkrel 2
 # Lib is LGPL, apps are GPL
 License:    LGPLv2+ and GPLv2+
 Group:      System/Servers
@@ -35,6 +35,7 @@ BuildRequires:  libraw1394-devel >= 1.2.1
 BuildRequires:  libavc1394-devel
 BuildRequires:  libiec61883-devel >= 1.1.0
 BuildRequires:  libfreebob-devel
+BuildRequires:  libffado-devel >= 1.999.17
 %if %enable_dbus
 BuildRequires:  libdbus-1-devel
 BuildRequires:  libexpat-devel
