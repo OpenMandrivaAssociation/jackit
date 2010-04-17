@@ -14,12 +14,13 @@
 Summary:    The Jack Audio Connection Kit 2
 Name:       jackit
 Version:    1.9.5
-Release:    %mkrel 2
+Release:    %mkrel 3
 # Lib is LGPL, apps are GPL
 License:    LGPLv2+ and GPLv2+
 Group:      System/Servers
 BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Source0:    http://www.grame.fr/~letz/jack-%{version}.tar.bz2
+Patch0:     jackit_error_on_fail.patch
 URL:        http://jackaudio.org/
 Buildrequires:  libalsa-devel
 Buildrequires:  libsndfile-devel
@@ -90,10 +91,11 @@ Small example clients that use the Jack Audio Connection Kit.
 
 %prep
 %setup -q -n jack-%{version}
+%patch0 -p1
 
 %build
 ./waf configure --prefix=%{_prefix} \
-      		--libdir=/%{_lib} \
+            --libdir=/%{_lib} \
 %if %enable_dbus
     --dbus \
 %if %enable_classic
