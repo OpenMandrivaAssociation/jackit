@@ -1,4 +1,4 @@
-# D-Bus support enabled by default, set flag "--with nodbus" to disable
+# D-Bus support enabled by default, set "--with nodbus" to disable
 %define enable_dbus 1
 %{?_with_nodbus: %{expand: %%define enable_dbus 0}}
 
@@ -13,15 +13,18 @@
 
 Summary:    The Jack Audio Connection Kit 2
 Name:       jackit
-Version:    1.9.5
-Release:    %mkrel 7
+Version:    1.9.6
+Release:    %mkrel 1
 # Lib is LGPL, apps are GPL
 License:    LGPLv2+ and GPLv2+
 Group:      System/Servers
 BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Source0:    http://www.grame.fr/~letz/jack-%{version}.tar.bz2
-Patch0:     jackit_error_on_fail.patch
+# p0 contains fixes for libdir, mandir and checks for celt>0.7.1
+# is sent upstream
+Patch0:     jack-1.9.6-wscript.patch
 URL:        http://jackaudio.org/
+# celt support is disabled since celt 0.8 is not supported
 Buildrequires:  libalsa-devel
 Buildrequires:  libsndfile-devel
 BuildRequires:  libsamplerate-devel
@@ -75,7 +78,6 @@ Provides:   %{name}-devel = %{version}-%{release}
 Obsoletes:  %{mklibname jack 0 -d}
 Requires:   pkgconfig
 Requires:   libsamplerate-devel
-Requires:   celt-devel
 
 %description -n %{lib_name_devel}
 Header files for the Jack Audio Connection Kit.
@@ -90,11 +92,14 @@ Small example clients that use the Jack Audio Connection Kit.
 
 %prep
 %setup -q -n jack-%{version}
-%patch0 -p1
+%patch0 -p0
 
 %build
-./waf configure --prefix=%{_prefix} \
-            --libdir=/%{_lib} \
+
+./waf configure --prefix=%{_prefix} --libdir=%{_libdir} \
+--alsa \
+--freebob \
+--firewire \
 %if %enable_dbus
     --dbus \
 %if %enable_classic
@@ -124,6 +129,7 @@ rm -rf %{buildroot}
 %files 
 %defattr(-,root,root)
 %doc README README_NETJACK2
+%doc %{_mandir}/man1/*
 
 %{_bindir}/jack_zombie
 %{_bindir}/jack_bufsize
