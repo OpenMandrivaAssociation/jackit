@@ -13,16 +13,14 @@
 
 Summary:    The Jack Audio Connection Kit 2
 Name:       jackit
-Version:    1.9.6
+Version:    1.9.7
 Release:    %mkrel 1
 # Lib is LGPL, apps are GPL
 License:    LGPLv2+ and GPLv2+
 Group:      System/Servers
 BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Source0:    http://www.grame.fr/~letz/jack-%{version}.tar.bz2
-# p0 contains fixes for libdir, mandir and checks for celt>0.7.1
-# is sent upstream
-Patch0:     jack-1.9.6-wscript.patch
+Patch0:     jackit-1.9.7-fix-dox-path.patch
 URL:        http://jackaudio.org/
 # celt support is disabled since celt 0.8 is not supported
 Buildrequires:  libalsa-devel
@@ -96,9 +94,8 @@ Small example clients that use the Jack Audio Connection Kit.
 
 %build
 
-./waf configure --prefix=%{_prefix} --libdir=%{_libdir} \
+./waf configure --prefix=%{_prefix} --libdir=/%_lib \
 --alsa \
---freebob \
 --firewire \
 %if %enable_dbus
     --dbus \
@@ -138,7 +135,6 @@ rm -rf %{buildroot}
 %{_bindir}/jack_cpu
 %{_bindir}/jack_server_control
 %{_bindir}/jack_thru
-%{_bindir}/jack_delay
 %{_bindir}/jack_cpu_load
 %{_bindir}/jack_load
 %{_bindir}/jack_unload
@@ -152,6 +148,10 @@ rm -rf %{buildroot}
 %{_bindir}/alsa_in
 %{_bindir}/alsa_out
 %{_bindir}/jack_netsource
+%{_bindir}/jack_iodelay
+%{_bindir}/jack_latent_client
+%{_bindir}/jack_midi_dump
+%{_bindir}/jack_session_notify
 
 %if %enable_dbus
 %{_bindir}/jackdbus
@@ -191,3 +191,4 @@ rm -rf %{buildroot}
 %{_bindir}/jack_simple_client
 %{_bindir}/jack_transport
 %{_bindir}/jack_wait
+%{_bindir}/jack_simple_session_client
