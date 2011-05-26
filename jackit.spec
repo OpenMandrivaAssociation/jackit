@@ -14,7 +14,7 @@
 Summary:    The Jack Audio Connection Kit 2
 Name:       jackit
 Version:    1.9.7
-Release:    %mkrel 1
+Release:    %mkrel 2
 # Lib is LGPL, apps are GPL
 License:    LGPLv2+ and GPLv2+
 Group:      System/Servers
@@ -94,9 +94,10 @@ Small example clients that use the Jack Audio Connection Kit.
 
 %build
 
+# to avoid crash we have to disable firewire at this time until
+# ffado gets fixed
 ./waf configure --prefix=%{_prefix} --libdir=/%_lib \
 --alsa \
---firewire \
 %if %enable_dbus
     --dbus \
 %if %enable_classic
