@@ -94,9 +94,10 @@ Small example clients that use the Jack Audio Connection Kit.
 %build
 export LINKFLAGS="%{ldflags}"
 
+# still disable ffado firewire
 ./waf configure --prefix=%{_prefix} --libdir=/%_lib \
 --alsa \
---ffado \
+# --firewire \
 %if %enable_dbus
     --dbus \
 %if %enable_classic
