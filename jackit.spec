@@ -97,7 +97,6 @@ export LINKFLAGS="%{ldflags}"
 # still disable ffado firewire
 ./waf configure --prefix=%{_prefix} --libdir=/%_lib \
 --alsa \
-# --firewire \
 %if %enable_dbus
     --dbus \
 %if %enable_classic
