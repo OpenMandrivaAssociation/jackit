@@ -8,7 +8,7 @@
 
 %define     lib_name_orig libjack
 %define     lib_major 0
-%define     lib_name %mklibname jack %{lib_major} 
+%define     lib_name %mklibname jack %{lib_major}
 %define     lib_name_devel %mklibname jack -d
 
 Summary:    The Jack Audio Connection Kit 2
@@ -35,7 +35,6 @@ BuildRequires:  libtermcap-devel
 BuildRequires:  libraw1394-devel >= 1.2.1
 BuildRequires:  libavc1394-devel
 BuildRequires:  libiec61883-devel >= 1.1.0
-BuildRequires:  libfreebob-devel
 BuildRequires:  libffado-devel >= 1.999.17
 %if %enable_dbus
 BuildRequires:  libdbus-1-devel
@@ -68,7 +67,7 @@ Requires:   %{name} >= %{version}
 This library is mandatory for the Jack Audio Connection Kit
 
 %package -n %{lib_name_devel}
-Summary:    Header files for Jack 
+Summary:    Header files for Jack
 Group:      Development/C
 Requires:   %{lib_name} = %{version}
 Provides:   %{lib_name_orig}-devel = %{version}-%{release}
@@ -81,7 +80,7 @@ Requires:   libsamplerate-devel
 Header files for the Jack Audio Connection Kit.
 
 %package    example-clients
-Summary:    Example clients that use Jack 
+Summary:    Example clients that use Jack
 Group:      Sound
 Requires:   %{name} = %{version}
 
@@ -95,17 +94,17 @@ Small example clients that use the Jack Audio Connection Kit.
 %build
 export LINKFLAGS="%{ldflags}"
 
-# to avoid crash we have to disable firewire at this time until
-# ffado gets fixed
 ./waf configure --prefix=%{_prefix} --libdir=/%_lib \
 --alsa \
+--ffado \
 %if %enable_dbus
     --dbus \
 %if %enable_classic
     --classic \
 %endif
 %endif
---doxygen
+--doxygen \
+-j1
 
 ./waf
 
@@ -125,7 +124,7 @@ rm -fr %{buildroot}/%{_docdir}
 %clean
 rm -rf %{buildroot}
 
-%files 
+%files
 %defattr(-,root,root)
 %doc README README_NETJACK2
 %doc %{_mandir}/man1/*
