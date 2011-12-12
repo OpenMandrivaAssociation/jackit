@@ -1,44 +1,40 @@
 # D-Bus support enabled by default, set "--with nodbus" to disable
 %define enable_dbus 1
-%{?_with_nodbus: %{expand: %%define enable_dbus 0}}
-
 # Build classic jackd executable as well
 %define enable_classic 1
-%{?_with_noclassic: %{expand: %%define enable_noclassic 0}}
 
-%define     lib_name_orig libjack
-%define     lib_major 0
-%define     lib_name %mklibname jack %{lib_major}
-%define     lib_name_devel %mklibname jack -d
+%define     major 0
+%define     libname %mklibname jack %{major}
+%define     libserver %mklibname jackserver %{major}
+%define     develname %mklibname jack -d
 
 Summary:    The Jack Audio Connection Kit 2
 Name:       jackit
 Version:    1.9.7
-Release:    %mkrel 3
+Release:    4
 # Lib is LGPL, apps are GPL
 License:    LGPLv2+ and GPLv2+
 Group:      System/Servers
-BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-buildroot
+URL:        http://jackaudio.org/
 Source0:    http://www.grame.fr/~letz/jack-%{version}.tar.bz2
 Patch0:     jackit-1.9.7-fix-dox-path.patch
-URL:        http://jackaudio.org/
 # celt support is disabled since celt 0.8 is not supported
-Buildrequires:  libalsa-devel
-Buildrequires:  libsndfile-devel
-BuildRequires:  libsamplerate-devel
-BuildRequires:  glib2-devel
-BuildRequires:  fltk-devel
 Buildrequires:  doxygen
+BuildRequires:  fltk-devel
 BuildRequires:  readline-devel
-BuildRequires:  ncurses-devel
-BuildRequires:  libtermcap-devel
-BuildRequires:  libraw1394-devel >= 1.2.1
-BuildRequires:  libavc1394-devel
-BuildRequires:  libiec61883-devel >= 1.1.0
-BuildRequires:  libffado-devel >= 1.999.17
+BuildRequires:  termcap-devel
+Buildrequires:  pkgconfig(alsa)
+BuildRequires:  pkgconfig(glib-2.0)
+BuildRequires:  pkgconfig(libavc1394)
+BuildRequires:  pkgconfig(libiec61883) >= 1.1.0
+BuildRequires:  pkgconfig(libffado) >= 1.999.17
+BuildRequires:  pkgconfig(libraw1394) >= 1.2.1
+BuildRequires:  pkgconfig(ncurses)
+BuildRequires:  pkgconfig(samplerate)
+Buildrequires:  pkgconfig(sndfile)
 %if %enable_dbus
-BuildRequires:  libdbus-1-devel
-BuildRequires:  libexpat-devel
+BuildRequires:  pkgconfig(dbus-1)
+BuildRequires:  expat-devel
 %endif
 
 %description
@@ -58,37 +54,42 @@ designed from the ground up to be suitable for professional audio
 work. This means that it focuses on two key areas: synchronous
 execution of all clients, and low latency operation.
 
-%package -n %{lib_name}
-Summary:    Library associated with jack kit, needed for jackd/jackdbus
+%package -n %{libname}
+Summary:    Library associated with jack
 Group:      System/Libraries
-Requires:   %{name} >= %{version}
 
-%description -n %{lib_name}
+%description -n %{libname}
 This library is mandatory for the Jack Audio Connection Kit
 
-%package -n %{lib_name_devel}
+%package -n %{libserver}
+Summary:    Library associated with jack server, needed for jackd/jackdbus
+Group:      System/Libraries
+Conflicts:	%{libname} < 1.9.7-4
+
+%description -n %{libserver}
+This library is mandatory for the Jack Audio Connection Kit Server
+
+%package -n %{develname}
 Summary:    Header files for Jack
 Group:      Development/C
-Requires:   %{lib_name} = %{version}
-Provides:   %{lib_name_orig}-devel = %{version}-%{release}
+Requires:   %{libname} = %{version}-%{release}
+Requires:   %{libserver} = %{version}-%{release}
 Provides:   %{name}-devel = %{version}-%{release}
 Obsoletes:  %{mklibname jack 0 -d}
-Requires:   pkgconfig
-Requires:   libsamplerate-devel
 
-%description -n %{lib_name_devel}
+%description -n %{develname}
 Header files for the Jack Audio Connection Kit.
 
 %package    example-clients
 Summary:    Example clients that use Jack
 Group:      Sound
-Requires:   %{name} = %{version}
+Requires:   %{name} = %{version}-%{release}
 
 %description    example-clients
 Small example clients that use the Jack Audio Connection Kit.
 
 %prep
-%setup -q -n jack-%{version}
+%setup -qn jack-%{version}
 %patch0 -p0
 
 %build
@@ -114,21 +115,9 @@ rm -rf %buildroot
 
 rm -fr %{buildroot}/%{_docdir}
 
-%if %mdkversion < 200900
-%post -n %{lib_name} -p /sbin/ldconfig
-%endif
-%if %mdkversion < 200900
-%postun -n %{lib_name} -p /sbin/ldconfig
-%endif
-
-%clean
-rm -rf %{buildroot}
-
 %files
-%defattr(-,root,root)
 %doc README README_NETJACK2
 %doc %{_mandir}/man1/*
-
 %{_bindir}/jack_zombie
 %{_bindir}/jack_bufsize
 %{_bindir}/jack_rec
@@ -153,7 +142,6 @@ rm -rf %{buildroot}
 %{_bindir}/jack_latent_client
 %{_bindir}/jack_midi_dump
 %{_bindir}/jack_session_notify
-
 %if %enable_dbus
 %{_bindir}/jackdbus
 %{_datadir}/dbus-1/services/org.jackaudio.service
@@ -164,17 +152,16 @@ rm -rf %{buildroot}
 %else
 %{_bindir}/jackd
 %endif
-
 %dir %{_libdir}/jack
 %{_libdir}/jack/*.so
 
-%files -n %{lib_name}
-%defattr(-,root,root)
-%{_libdir}/libjack.so.%{lib_major}*
-%{_libdir}/libjackserver.so.%{lib_major}*
+%files -n %{libname}
+%{_libdir}/libjack.so.%{major}*
 
-%files -n %{lib_name_devel}
-%defattr(-,root,root)
+%files -n %{libserver}
+%{_libdir}/libjackserver.so.%{major}*
+
+%files -n %{develname}
 %doc %{_datadir}/jack-audio-connection-kit/reference/html
 %{_includedir}/jack
 %{_libdir}/lib*.so
@@ -182,7 +169,6 @@ rm -rf %{buildroot}
 %{_libdir}/pkgconfig/jack.pc
 
 %files example-clients
-%defattr(-,root,root)
 %{_bindir}/jack_metro
 %{_bindir}/jack_midiseq
 %{_bindir}/jack_midisine
@@ -193,3 +179,4 @@ rm -rf %{buildroot}
 %{_bindir}/jack_transport
 %{_bindir}/jack_wait
 %{_bindir}/jack_simple_session_client
+
