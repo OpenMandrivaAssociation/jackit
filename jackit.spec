@@ -10,19 +10,18 @@
 
 Summary:    The Jack Audio Connection Kit 2
 Name:       jackit
-Version:    1.9.7
-Release:    4
+Version:    1.9.8
+Release:    1
 # Lib is LGPL, apps are GPL
 License:    LGPLv2+ and GPLv2+
 Group:      System/Servers
 URL:        http://jackaudio.org/
-Source0:    http://www.grame.fr/~letz/jack-%{version}.tar.bz2
-Patch0:     jackit-1.9.7-fix-dox-path.patch
-# celt support is disabled since celt 0.8 is not supported
+Source0:    http://www.grame.fr/~letz/jack-%{version}.tgz
 Buildrequires:  doxygen
 BuildRequires:  fltk-devel
 BuildRequires:  readline-devel
 BuildRequires:  termcap-devel
+BuildRequires:  celt-devel
 Buildrequires:  pkgconfig(alsa)
 BuildRequires:  pkgconfig(glib-2.0)
 BuildRequires:  pkgconfig(libavc1394)
@@ -64,7 +63,7 @@ This library is mandatory for the Jack Audio Connection Kit
 %package -n %{libserver}
 Summary:    Library associated with jack server, needed for jackd/jackdbus
 Group:      System/Libraries
-Conflicts:	%{libname} < 1.9.7-4
+Conflicts:  %{libname} < 1.9.8-1
 
 %description -n %{libserver}
 This library is mandatory for the Jack Audio Connection Kit Server
@@ -90,10 +89,9 @@ Small example clients that use the Jack Audio Connection Kit.
 
 %prep
 %setup -qn jack-%{version}
-%patch0 -p0
 
 %build
-export LINKFLAGS="%{ldflags}"
+cd jack-%{version}
 
 # still disable ffado firewire
 ./waf configure --prefix=%{_prefix} --libdir=/%_lib \
@@ -111,12 +109,12 @@ export LINKFLAGS="%{ldflags}"
 
 %install
 rm -rf %buildroot
+cd jack-%{version}
+cp -a html build/default/
 ./waf install --destdir=%{buildroot}
 
-rm -fr %{buildroot}/%{_docdir}
-
 %files
-%doc README README_NETJACK2
+%doc jack-%{version}/README jack-%{version}/README_NETJACK2
 %doc %{_mandir}/man1/*
 %{_bindir}/jack_zombie
 %{_bindir}/jack_bufsize
@@ -142,6 +140,9 @@ rm -fr %{buildroot}/%{_docdir}
 %{_bindir}/jack_latent_client
 %{_bindir}/jack_midi_dump
 %{_bindir}/jack_session_notify
+%{_bindir}/jack_midi_latency_test
+%{_bindir}/jack_net_master
+%{_bindir}/jack_net_slave
 %if %enable_dbus
 %{_bindir}/jackdbus
 %{_datadir}/dbus-1/services/org.jackaudio.service
@@ -157,6 +158,7 @@ rm -fr %{buildroot}/%{_docdir}
 
 %files -n %{libname}
 %{_libdir}/libjack.so.%{major}*
+%{_libdir}/libjacknet.so.%{major}*
 
 %files -n %{libserver}
 %{_libdir}/libjackserver.so.%{major}*
