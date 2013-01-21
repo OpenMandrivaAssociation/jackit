@@ -20,7 +20,7 @@ Source0:    http://www.grame.fr/~letz/jack-%{version}.tgz
 Buildrequires:  doxygen
 BuildRequires:  fltk-devel
 BuildRequires:  readline-devel
-BuildRequires:  termcap-devel
+BuildRequires:  pkgconfig(ncursesw)
 BuildRequires:  celt-devel
 BuildRequires:  pkgconfig(alsa)
 BuildRequires:  pkgconfig(glib-2.0)
