@@ -26,7 +26,7 @@ BuildRequires:  pkgconfig(alsa)
 BuildRequires:  pkgconfig(glib-2.0)
 BuildRequires:  pkgconfig(libavc1394)
 BuildRequires:  pkgconfig(libiec61883) >= 1.1.0
-BuildRequires:  pkgconfig(libffado) >= 1.999.17
+# BuildRequires:  pkgconfig(libffado) >= 1.999.17
 BuildRequires:  pkgconfig(libraw1394) >= 1.2.1
 BuildRequires:  pkgconfig(ncurses)
 BuildRequires:  pkgconfig(samplerate)
