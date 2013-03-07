@@ -1,3 +1,5 @@
+%define debug_package          %{nil}
+
 # D-Bus support enabled by default, set "--with nodbus" to disable
 %define enable_dbus 1
 # Build classic jackd executable as well
