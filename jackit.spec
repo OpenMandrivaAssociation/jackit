@@ -1,4 +1,4 @@
-%define debug_package          %{nil}
+#define debug_package          {nil}
 
 # D-Bus support enabled by default, set "--with nodbus" to disable
 %define enable_dbus 1
@@ -19,6 +19,7 @@ License:    LGPLv2+ and GPLv2+
 Group:      System/Servers
 URL:        http://jackaudio.org/
 Source0:    http://www.grame.fr/~letz/jack-%{version}.tgz
+Patch0:		aarch64-sigsegv.patch
 Buildrequires:  doxygen
 BuildRequires:  fltk-devel
 BuildRequires:  readline-devel
@@ -91,9 +92,16 @@ Small example clients that use the Jack Audio Connection Kit.
 
 %prep
 %setup -qn jack-%{version}
+%patch0 -p1
 
 %build
+%setup_compile_flags
 cd jack-%{version}
+export CC=%{__cc}
+export CXX=%{__cxx}
+export cc=%{__cc}
+export AR=%{__ar}
+export RANLIB=%{__ranlib}
 
 # still disable ffado firewire
 ./waf configure --prefix=%{_prefix} --libdir=/%_lib \
