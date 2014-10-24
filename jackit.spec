@@ -1,4 +1,4 @@
-#define debug_package          {nil}
+#define debug_package {nil}
 
 # D-Bus support enabled by default, set "--with nodbus" to disable
 %define enable_dbus 1
@@ -14,14 +14,14 @@
 Summary:	The Jack Audio Connection Kit 2
 Name:		jackit
 Version:	1.9.8
-Release:	11
+Release:	12
 # Lib is LGPL, apps are GPL
 License:	LGPLv2+ and GPLv2+
 Group:		System/Servers
 Url:		http://jackaudio.org/
 Source0:	http://www.grame.fr/~letz/jack-%{version}.tgz
 Patch0:		aarch64-sigsegv.patch
-Buildrequires:	doxygen
+BuildRequires:	doxygen
 BuildRequires:	fltk-devel
 BuildRequires:	readline-devel
 BuildRequires:	pkgconfig(alsa)
@@ -35,6 +35,7 @@ BuildRequires:	pkgconfig(ncurses)
 BuildRequires:	pkgconfig(ncursesw)
 BuildRequires:	pkgconfig(samplerate)
 BuildRequires:	pkgconfig(sndfile)
+BuildRequires:	pkgconfig(python2)
 %if %enable_dbus
 BuildRequires:	pkgconfig(dbus-1)
 BuildRequires:	pkgconfig(expat)
@@ -114,6 +115,9 @@ export CXX=%{__cxx}
 export cc=%{__cc}
 export AR=%{__ar}
 export RANLIB=%{__ranlib}
+export PYTHON=%{__python2}
+
+sed -i -e 's/env python/env python2/' waf wscript
 
 # still disable ffado firewire
 ./waf configure \
