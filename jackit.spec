@@ -1,4 +1,5 @@
 #define debug_package {nil}
+%define _disable_ld_no_undefined 1
 
 # D-Bus support enabled by default, set "--with nodbus" to disable
 %define enable_dbus 1
@@ -13,14 +14,13 @@
 
 Summary:	The Jack Audio Connection Kit 2
 Name:		jackit
-Version:	1.9.8
-Release:	12
+Version:	1.9.10
+Release:	1
 # Lib is LGPL, apps are GPL
 License:	LGPLv2+ and GPLv2+
 Group:		System/Servers
 Url:		http://jackaudio.org/
-Source0:	http://www.grame.fr/~letz/jack-%{version}.tgz
-Patch0:		aarch64-sigsegv.patch
+Source0:	http://www.grame.fr/~letz/jack-%{version}.tar.bz2
 BuildRequires:	doxygen
 BuildRequires:	fltk-devel
 BuildRequires:	readline-devel
@@ -109,7 +109,6 @@ Small example clients that use the Jack Audio Connection Kit.
 
 %build
 %setup_compile_flags
-cd jack-%{version}
 export CC=%{__cc}
 export CXX=%{__cxx}
 export cc=%{__cc}
@@ -119,10 +118,12 @@ export PYTHON=%{__python2}
 
 sed -i -e 's/env python/env python2/' waf wscript
 
+sed -i -e 's|html_docs_source_dir = "build/default/html"|html_docs_source_dir = "html"|' wscript
+
 # still disable ffado firewire
 ./waf configure \
 	--prefix=%{_prefix} \
-	--libdir=/%_lib \
+	--libdir=%{_libdir} \
 	--alsa \
 %if %enable_dbus
 	--dbus \
@@ -136,8 +137,6 @@ sed -i -e 's/env python/env python2/' waf wscript
 ./waf
 
 %install
-cd jack-%{version}
-cp -a html build/default/
 ./waf install --destdir=%{buildroot}
 
 # Fix permissions
@@ -145,7 +144,7 @@ chmod 0755 %{buildroot}%{_libdir}/*.so*
 chmod 0755 %{buildroot}%{_libdir}/jack/*.so
 
 %files
-%doc jack-%{version}/README jack-%{version}/README_NETJACK2
+%doc README README_NETJACK2
 %doc %{_mandir}/man1/*
 %{_bindir}/jack_zombie
 %{_bindir}/jack_bufsize
