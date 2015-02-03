@@ -1,4 +1,5 @@
-#define debug_package          {nil}
+#define debug_package {nil}
+%define _disable_ld_no_undefined 1
 
 # D-Bus support enabled by default, set "--with nodbus" to disable
 %define enable_dbus 1
@@ -13,15 +14,15 @@
 
 Summary:	The Jack Audio Connection Kit 2
 Name:		jackit
-Version:	1.9.8
-Release:	6
+Version:	1.9.10
+Release:	3
 # Lib is LGPL, apps are GPL
 License:	LGPLv2+ and GPLv2+
 Group:		System/Servers
 Url:		http://jackaudio.org/
-Source0:	http://www.grame.fr/~letz/jack-%{version}.tgz
-Patch0:		aarch64-sigsegv.patch
-Buildrequires:	doxygen
+Source0:	http://www.grame.fr/~letz/jack-%{version}.tar.bz2
+Patch0:		jack-1.9.10-fix-pkg-config-file.patch
+BuildRequires:	doxygen
 BuildRequires:	fltk-devel
 BuildRequires:	readline-devel
 BuildRequires:	pkgconfig(alsa)
@@ -35,6 +36,7 @@ BuildRequires:	pkgconfig(ncurses)
 BuildRequires:	pkgconfig(ncursesw)
 BuildRequires:	pkgconfig(samplerate)
 BuildRequires:	pkgconfig(sndfile)
+BuildRequires:	pkgconfig(python2)
 %if %enable_dbus
 BuildRequires:	pkgconfig(dbus-1)
 BuildRequires:	pkgconfig(expat)
@@ -108,17 +110,21 @@ Small example clients that use the Jack Audio Connection Kit.
 
 %build
 %setup_compile_flags
-cd jack-%{version}
 export CC=%{__cc}
 export CXX=%{__cxx}
 export cc=%{__cc}
 export AR=%{__ar}
 export RANLIB=%{__ranlib}
+export PYTHON=%{__python2}
+
+sed -i -e 's/env python/env python2/' waf wscript
+
+sed -i -e 's|html_docs_source_dir = "build/default/html"|html_docs_source_dir = "html"|' wscript
 
 # still disable ffado firewire
 ./waf configure \
 	--prefix=%{_prefix} \
-	--libdir=/%_lib \
+	--libdir=%{_libdir} \
 	--alsa \
 %if %enable_dbus
 	--dbus \
@@ -132,8 +138,6 @@ export RANLIB=%{__ranlib}
 ./waf
 
 %install
-cd jack-%{version}
-cp -a html build/default/
 ./waf install --destdir=%{buildroot}
 
 # Fix permissions
@@ -141,7 +145,7 @@ chmod 0755 %{buildroot}%{_libdir}/*.so*
 chmod 0755 %{buildroot}%{_libdir}/jack/*.so
 
 %files
-%doc jack-%{version}/README jack-%{version}/README_NETJACK2
+%doc README README_NETJACK2
 %doc %{_mandir}/man1/*
 %{_bindir}/jack_zombie
 %{_bindir}/jack_bufsize
@@ -210,4 +214,3 @@ chmod 0755 %{buildroot}%{_libdir}/jack/*.so
 %{_bindir}/jack_transport
 %{_bindir}/jack_wait
 %{_bindir}/jack_simple_session_client
-
