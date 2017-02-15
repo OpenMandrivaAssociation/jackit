@@ -31,7 +31,7 @@ BuildRequires:	pkgconfig(celt)
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig(libavc1394)
 BuildRequires:	pkgconfig(libiec61883) >= 1.1.0
-BuildRequires:	pkgconfig(libffado) >= 1.999.17
+#BuildRequires:	pkgconfig(libffado) >= 1.999.17
 BuildRequires:	pkgconfig(libraw1394) >= 1.2.1
 BuildRequires:	pkgconfig(ncurses)
 BuildRequires:	pkgconfig(ncursesw)
@@ -126,7 +126,6 @@ sed -i -e 's|html_docs_source_dir = "build/default/html"|html_docs_source_dir = 
 ./waf configure \
 	--prefix=%{_prefix} \
 	--libdir=%{_libdir} \
-	--firewire \
 	--alsa \
 %if %enable_dbus
 	--dbus \
