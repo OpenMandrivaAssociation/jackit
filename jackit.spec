@@ -15,12 +15,13 @@
 Summary:	The Jack Audio Connection Kit 2
 Name:		jackit
 Version:	1.9.10
-Release:	7
+Release:	8
 # Lib is LGPL, apps are GPL
 License:	LGPLv2+ and GPLv2+
 Group:		System/Servers
 Url:		http://jackaudio.org/
 Source0:	http://www.grame.fr/~letz/jack-%{version}.tar.bz2
+Source1:	99-audio.conf
 Patch0:		jack-1.9.10-fix-pkg-config-file.patch
 BuildRequires:	doxygen
 BuildRequires:	fltk-devel
@@ -30,7 +31,7 @@ BuildRequires:	pkgconfig(celt)
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig(libavc1394)
 BuildRequires:	pkgconfig(libiec61883) >= 1.1.0
-#BuildRequires:	pkgconfig(libffado) >= 1.999.17
+BuildRequires:	pkgconfig(libffado) >= 1.999.17
 BuildRequires:	pkgconfig(libraw1394) >= 1.2.1
 BuildRequires:	pkgconfig(ncurses)
 BuildRequires:	pkgconfig(ncursesw)
@@ -81,7 +82,7 @@ Group:		System/Libraries
 Conflicts:	%{libname} < 1.9.8-1
 
 %description -n %{libserver}
-This package contains a shared library for the Jack Audio Connection Kit 
+This package contains a shared library for the Jack Audio Connection Kit
 Server.
 
 %package -n %{devname}
@@ -125,6 +126,7 @@ sed -i -e 's|html_docs_source_dir = "build/default/html"|html_docs_source_dir = 
 ./waf configure \
 	--prefix=%{_prefix} \
 	--libdir=%{_libdir} \
+	--firewire \
 	--alsa \
 %if %enable_dbus
 	--dbus \
@@ -143,6 +145,9 @@ sed -i -e 's|html_docs_source_dir = "build/default/html"|html_docs_source_dir = 
 # Fix permissions
 chmod 0755 %{buildroot}%{_libdir}/*.so*
 chmod 0755 %{buildroot}%{_libdir}/jack/*.so
+mkdir -p %{buildroot}%{_sysconfdir}/security/limits.d/
+install -m 0644 %{SOURCE1} %{buildroot}%{_sysconfdir}/security/limits.d/
+
 
 %files
 %doc README README_NETJACK2
@@ -188,6 +193,7 @@ chmod 0755 %{buildroot}%{_libdir}/jack/*.so
 %{_libdir}/jack/*.so
 
 %files -n %{libname}
+%{_sysconfdir}/security/limits.d/99-audio.conf
 %{_libdir}/libjack.so.%{major}*
 
 %files -n %{libnet}
