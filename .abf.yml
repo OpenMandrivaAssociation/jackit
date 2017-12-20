@@ -1,4 +1,2 @@
-removed_sources:
-  jack-1.9.8.tgz: 397a01bb94eb4b40f328329a9e6af13f53abaa89
 sources:
-  jack-1.9.10.tar.bz2: 1177655ae0fbbd8c2229b398a79724115a392941
+  v1.9.12.tar.gz: 8ab6329c6a107cdf370c40afac154370b406437d
