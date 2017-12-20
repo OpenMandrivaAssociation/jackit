@@ -14,13 +14,13 @@
 
 Summary:	The Jack Audio Connection Kit 2
 Name:		jackit
-Version:	1.9.10
-Release:	8
+Version:	1.9.12
+Release:	1
 # Lib is LGPL, apps are GPL
 License:	LGPLv2+ and GPLv2+
 Group:		System/Servers
 Url:		http://jackaudio.org/
-Source0:	http://www.grame.fr/~letz/jack-%{version}.tar.bz2
+Source0:	https://github.com/jackaudio/jack2/archive/v%{version}.tar.gz
 Source1:	99-audio.conf
 Patch0:		jack-1.9.10-fix-pkg-config-file.patch
 BuildRequires:	doxygen
@@ -106,7 +106,7 @@ Requires:	%{name} = %{version}-%{release}
 Small example clients that use the Jack Audio Connection Kit.
 
 %prep
-%setup -qn jack-%{version}
+%setup -qn jack2-%{version}
 %apply_patches
 
 %build
@@ -219,3 +219,4 @@ install -m 0644 %{SOURCE1} %{buildroot}%{_sysconfdir}/security/limits.d/
 %{_bindir}/jack_transport
 %{_bindir}/jack_wait
 %{_bindir}/jack_simple_session_client
+%{_bindir}/jack_simdtests
