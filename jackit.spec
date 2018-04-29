@@ -12,6 +12,11 @@
 %define	libserver %mklibname jackserver %{major}
 %define	devname %mklibname jack -d
 
+# Disable if you need to avoid a circular dependency:
+# doxygen requires Qt, which in turn requires PulseAudio,
+# which requires jackit...
+%bcond_with doxygen
+
 Summary:	The Jack Audio Connection Kit 2
 Name:		jackit
 Version:	1.9.12
@@ -23,7 +28,9 @@ Url:		http://jackaudio.org/
 Source0:	https://github.com/jackaudio/jack2/archive/v%{version}.tar.gz
 Source1:	99-audio.conf
 Patch0:		jack-1.9.10-fix-pkg-config-file.patch
+%if %{with doxygen}
 BuildRequires:	doxygen
+%endif
 BuildRequires:	fltk-devel
 BuildRequires:	readline-devel
 BuildRequires:	pkgconfig(alsa)
@@ -133,7 +140,9 @@ sed -i -e 's|html_docs_source_dir = "build/default/html"|html_docs_source_dir = 
 	--classic \
 %endif
 %endif
+%if %{with doxygen}
 	--doxygen \
+%endif
 	-j1
 
 ./waf
@@ -202,7 +211,9 @@ install -m 0644 %{SOURCE1} %{buildroot}%{_sysconfdir}/security/limits.d/
 %{_libdir}/libjackserver.so.%{major}*
 
 %files -n %{devname}
+%if %{with doxygen}
 %doc %{_datadir}/jack-audio-connection-kit/reference/html
+%endif
 %{_includedir}/jack
 %{_libdir}/lib*.so
 %dir %{_libdir}/jack
