@@ -19,8 +19,8 @@
 
 Summary:	The Jack Audio Connection Kit 2
 Name:		jackit
-Version:	1.9.12
-Release:	3
+Version:	1.9.13
+Release:	1
 # Lib is LGPL, apps are GPL
 License:	LGPLv2+ and GPLv2+
 Group:		System/Servers
@@ -158,10 +158,11 @@ install -m 0644 %{SOURCE1} %{buildroot}%{_sysconfdir}/security/limits.d/
 
 
 %files
-%doc README README_NETJACK2
+%doc README_NETJACK2
 %doc %{_mandir}/man1/*
 %{_bindir}/jack_zombie
 %{_bindir}/jack_bufsize
+%{_bindir}/jack_property
 %{_bindir}/jack_rec
 %{_bindir}/jack_test
 %{_bindir}/jack_cpu
