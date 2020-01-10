@@ -114,7 +114,7 @@ Small example clients that use the Jack Audio Connection Kit.
 
 %prep
 %setup -qn jack2-%{version}
-%apply_patches
+%autopatch -p1
 
 %build
 %setup_compile_flags
