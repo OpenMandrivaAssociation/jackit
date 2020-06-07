@@ -1,3 +1,8 @@
+# pulseaudio uses jack, wine uses pulseaudio
+%ifarch %{x86_64}
+%bcond_without compat32
+%endif
+
 #define debug_package {nil}
 %define _disable_ld_no_undefined 1
 
@@ -11,6 +16,10 @@
 %define	libnet %mklibname jacknet %{major}
 %define	libserver %mklibname jackserver %{major}
 %define	devname %mklibname jack -d
+%define	lib32name %mklib32name jack %{major}
+%define	lib32net %mklib32name jacknet %{major}
+%define	lib32server %mklib32name jackserver %{major}
+%define	dev32name %mklib32name jack -d
 
 # Disable if you need to avoid a circular dependency:
 # doxygen requires Qt, which in turn requires PulseAudio,
@@ -20,7 +29,7 @@
 Summary:	The Jack Audio Connection Kit 2
 Name:		jackit
 Version:	1.9.14
-Release:	2
+Release:	3
 # Lib is LGPL, apps are GPL
 License:	LGPLv2+ and GPLv2+
 Group:		System/Servers
@@ -48,6 +57,20 @@ BuildRequires:	pkgconfig(python2)
 %if %enable_dbus
 BuildRequires:	pkgconfig(dbus-1)
 BuildRequires:	pkgconfig(expat)
+%endif
+%if %{with compat32}
+BuildRequires:	devel(libasound)
+BuildRequires:	devel(libglib-2.0)
+BuildRequires:	devel(libncurses)
+BuildRequires:	devel(libncursesw)
+BuildRequires:	devel(libsndfile)
+BuildRequires:	devel(libdbus-1)
+BuildRequires:	devel(libexpat)
+BuildRequires:	devel(libreadline)
+BuildRequires:	devel(libogg)
+BuildRequires:	devel(libopus)
+BuildRequires:	devel(libcelt0)
+BuildRequires:	devel(libsamplerate)
 %endif
 
 %description
@@ -112,11 +135,63 @@ Requires:	%{name} = %{version}-%{release}
 %description    example-clients
 Small example clients that use the Jack Audio Connection Kit.
 
+%if %{with compat32}
+%package -n %{lib32name}
+Summary:	Library associated with jack (32-bit)
+Group:		System/Libraries
+Requires:	%{libname} = %{EVRD}
+
+%description -n %{lib32name}
+This package contains a shared library for the Jack Audio Connection Kit.
+
+%package -n %{lib32net}
+Summary:	Library associated with jack (32-bit)
+Group:		System/Libraries
+
+%description -n %{lib32net}
+This package contains a shared library for the Jack Audio Connection Kit.
+
+%package -n %{lib32server}
+Summary:	Library associated with jack server, needed for jackd/jackdbus (32-bit)
+Group:		System/Libraries
+
+%description -n %{lib32server}
+This package contains a shared library for the Jack Audio Connection Kit
+Server.
+
+%package -n %{dev32name}
+Summary:	Header files for Jack
+Group:		Development/C
+Requires:	%{devname} = %{version}-%{release}
+Requires:	%{lib32name} = %{version}-%{release}
+Requires:	%{lib32net} = %{version}-%{release}
+Requires:	%{lib32server} = %{version}-%{release}
+
+%description -n %{dev32name}
+Header files for the Jack Audio Connection Kit.
+%endif
+
 %prep
-%setup -qn jack2-%{version}
-%autopatch -p1
+%autosetup -p1 -n jack2-%{version}
 
 %build
+%if %{with compat32}
+mkdir build32
+cp -a $(ls -1 |grep -v build32) build32/
+cd build32
+export CC="gcc -m32"
+export CXX="g++ -m32"
+export cc="$CC"
+./waf configure \
+	--prefix=%{_prefix} \
+	--libdir=%{_prefix}/lib \
+	--alsa \
+	--dbus \
+	--classic
+./waf
+cd ..
+%endif
+
 %setup_compile_flags
 export CC=%{__cc}
 export CXX=%{__cxx}
@@ -148,6 +223,11 @@ sed -i -e 's|html_docs_source_dir = "build/default/html"|html_docs_source_dir = 
 ./waf
 
 %install
+%if %{with compat32}
+cd build32
+./waf install --destdir=%{buildroot}
+cd ..
+%endif
 ./waf install --destdir=%{buildroot}
 
 # Fix permissions
@@ -198,12 +278,11 @@ install -m 0644 %{SOURCE1} %{buildroot}%{_sysconfdir}/security/limits.d/
 %else
 %{_bindir}/jackd
 %endif
-%dir %{_libdir}/jack
-%{_libdir}/jack/*.so
 
 %files -n %{libname}
 %{_sysconfdir}/security/limits.d/99-audio.conf
 %{_libdir}/libjack.so.%{major}*
+%{_libdir}/jack
 
 %files -n %{libnet}
 %{_libdir}/libjacknet.so.%{major}*
@@ -217,7 +296,6 @@ install -m 0644 %{SOURCE1} %{buildroot}%{_sysconfdir}/security/limits.d/
 %endif
 %{_includedir}/jack
 %{_libdir}/lib*.so
-%dir %{_libdir}/jack
 %{_libdir}/pkgconfig/jack.pc
 
 %files example-clients
@@ -232,3 +310,19 @@ install -m 0644 %{SOURCE1} %{buildroot}%{_sysconfdir}/security/limits.d/
 %{_bindir}/jack_wait
 %{_bindir}/jack_simple_session_client
 %{_bindir}/jack_simdtests
+
+%if %{with compat32}
+%files -n %{lib32name}
+%{_prefix}/lib/libjack.so.%{major}*
+%{_prefix}/lib/jack
+
+%files -n %{lib32net}
+%{_prefix}/lib/libjacknet.so.%{major}*
+
+%files -n %{lib32server}
+%{_prefix}/lib/libjackserver.so.%{major}*
+
+%files -n %{dev32name}
+%{_prefix}/lib/lib*.so
+%{_prefix}/lib/pkgconfig/jack.pc
+%endif
