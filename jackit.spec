@@ -28,15 +28,15 @@
 
 Summary:	The Jack Audio Connection Kit 2
 Name:		jackit
-Version:	1.9.14
-Release:	3
+Version:	1.9.16
+Release:	1
 # Lib is LGPL, apps are GPL
 License:	LGPLv2+ and GPLv2+
 Group:		System/Servers
 Url:		http://jackaudio.org/
-Source0:	https://github.com/jackaudio/jack2/archive/v%{version}.tar.gz
+Source0:	https://github.com/jackaudio/jack2/archive/v%{version}/jack2-%{version}.tar.gz
 Source1:	99-audio.conf
-Patch0:		jack-1.9.10-fix-pkg-config-file.patch
+Patch0:		jack-1.9.16-fix-pkg-config-file.patch
 %if %{with doxygen}
 BuildRequires:	doxygen
 %endif

@@ -1,9 +1,0 @@
-diff -Naur jack-1.9.10/jack.pc.in jack-1.9.10.tpg/jack.pc.in
---- jack-1.9.10/jack.pc.in	2014-07-18 12:28:12.000000000 +0000
-+++ jack-1.9.10.tpg/jack.pc.in	2015-02-03 12:26:15.049313359 +0000
-@@ -8,4 +8,4 @@
- Description: the Jack Audio Connection Kit: a low-latency synchronous callback-based media server
- Version: @JACK_VERSION@
- Libs: -L@LIBDIR@ -ljack
--Cflags: -I@INCLUDEDIR@
-+Cflags: -I@INCLUDEDIR@ -I${includedir}/jack
