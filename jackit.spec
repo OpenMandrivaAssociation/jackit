@@ -28,7 +28,7 @@
 
 Summary:	The Jack Audio Connection Kit 2
 Name:		jackit
-Version:	1.9.19
+Version:	1.9.20
 Release:	1
 # Lib is LGPL, apps are GPL
 License:	LGPLv2+ and GPLv2+
