@@ -1,9 +1,9 @@
-diff -uraN jack2-1.9.16/jack.pc.in omv-jack2-1.9.16/jack.pc.in
---- jack2-1.9.16/jack.pc.in	2020-10-16 21:10:40.000000000 +0200
-+++ omv-jack2-1.9.16/jack.pc.in	2020-10-21 21:06:53.668481254 +0200
-@@ -8,4 +8,4 @@
+diff -uraN jack2-1.9.21/jack.pc.in omv-jack2-1.9.21/jack.pc.in
+--- jack2-1.9.21/jack.pc.in	2022-04-15 21:14:06.000000000 +0200
++++ omv-jack2-1.9.21/jack.pc.in	2022-05-02 20:51:01.192276391 +0200
+@@ -9,4 +9,4 @@
  Description: the Jack Audio Connection Kit: a low-latency synchronous callback-based media server
  Version: @JACK_VERSION@
- Libs: -L@LIBDIR@ -l@CLIENTLIB@
--Cflags: -I@INCLUDEDIR@
+ Libs: -L${libdir} -l@CLIENTLIB@
+-Cflags: -I${includedir}
 +Cflags: -I@INCLUDEDIR@ -I${includedir}/jack
