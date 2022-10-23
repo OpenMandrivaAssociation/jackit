@@ -173,6 +173,7 @@ Header files for the Jack Audio Connection Kit.
 
 %prep
 %autosetup -p1 -n jack2-%{version}
+sed -i -e "s,'rU','r',g" waflib/*.py
 
 %build
 %if %{with compat32}
@@ -240,34 +241,6 @@ install -m 0644 %{SOURCE1} %{buildroot}%{_sysconfdir}/security/limits.d/
 %files
 %doc README_NETJACK2
 %doc %{_mandir}/man1/*
-%{_bindir}/jack_zombie
-%{_bindir}/jack_bufsize
-%{_bindir}/jack_property
-%{_bindir}/jack_rec
-%{_bindir}/jack_test
-%{_bindir}/jack_cpu
-%{_bindir}/jack_server_control
-%{_bindir}/jack_thru
-%{_bindir}/jack_cpu_load
-%{_bindir}/jack_load
-%{_bindir}/jack_unload
-%{_bindir}/jack_monitor_client
-%{_bindir}/jack_connect
-%{_bindir}/jack_disconnect
-%{_bindir}/jack_lsp
-%{_bindir}/jack_freewheel
-%{_bindir}/jack_evmon
-%{_bindir}/jack_alias
-%{_bindir}/alsa_in
-%{_bindir}/alsa_out
-%{_bindir}/jack_netsource
-%{_bindir}/jack_iodelay
-%{_bindir}/jack_latent_client
-%{_bindir}/jack_midi_dump
-%{_bindir}/jack_session_notify
-%{_bindir}/jack_midi_latency_test
-%{_bindir}/jack_net_master
-%{_bindir}/jack_net_slave
 %if %enable_dbus
 %{_bindir}/jackdbus
 %{_datadir}/dbus-1/services/org.jackaudio.service
@@ -297,19 +270,6 @@ install -m 0644 %{SOURCE1} %{buildroot}%{_sysconfdir}/security/limits.d/
 %{_includedir}/jack
 %{_libdir}/lib*.so
 %{_libdir}/pkgconfig/jack.pc
-
-%files example-clients
-%{_bindir}/jack_metro
-%{_bindir}/jack_midiseq
-%{_bindir}/jack_midisine
-%{_bindir}/jack_multiple_metro
-%{_bindir}/jack_samplerate
-%{_bindir}/jack_showtime
-%{_bindir}/jack_simple_client
-%{_bindir}/jack_transport
-%{_bindir}/jack_wait
-%{_bindir}/jack_simple_session_client
-%{_bindir}/jack_simdtests
 
 %if %{with compat32}
 %files -n %{lib32name}
