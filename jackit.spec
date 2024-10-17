@@ -33,7 +33,7 @@ Release:	2
 # Lib is LGPL, apps are GPL
 License:	LGPLv2+ and GPLv2+
 Group:		System/Servers
-Url:		http://jackaudio.org/
+Url:		https://jackaudio.org/
 Source0:	https://github.com/jackaudio/jack2/archive/v%{version}/jack2-%{version}.tar.gz
 Source1:	99-audio.conf
 Patch0:		jack-1.9.16-fix-pkg-config-file.patch
