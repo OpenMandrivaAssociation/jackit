@@ -36,6 +36,9 @@ Group:		System/Servers
 Url:		https://jackaudio.org/
 Source0:	https://github.com/jackaudio/jack2/archive/v%{version}/jack2-%{version}.tar.gz
 Source1:	99-audio.conf
+# The bundled waf build system doesn't support python > 3.12
+# Let's update it
+Source2:	https://waf.io/waf-2.1.9.tar.bz2
 Patch0:		jack-1.9.16-fix-pkg-config-file.patch
 %if %{with doxygen}
 BuildRequires:	doxygen
@@ -53,7 +56,6 @@ BuildRequires:	pkgconfig(ncurses)
 BuildRequires:	pkgconfig(ncursesw)
 BuildRequires:	pkgconfig(samplerate)
 BuildRequires:	pkgconfig(sndfile)
-BuildRequires:	pkgconfig(python2)
 %if %enable_dbus
 BuildRequires:	pkgconfig(dbus-1)
 BuildRequires:	pkgconfig(expat)
@@ -173,7 +175,12 @@ Header files for the Jack Audio Connection Kit.
 
 %prep
 %autosetup -p1 -n jack2-%{version}
-sed -i -e "s,'rU','r',g" waflib/*.py
+tar xf %{S:2}
+for i in waflib waf waf-light; do
+	rm -rf $i
+	mv waf-*/$i .
+done
+rm -rf waf-*
 
 %build
 %if %{with compat32}
@@ -199,9 +206,6 @@ export CXX=%{__cxx}
 export cc=%{__cc}
 export AR=%{__ar}
 export RANLIB=%{__ranlib}
-export PYTHON=%{__python2}
-
-sed -i -e 's/env python/env python2/' waf wscript
 
 sed -i -e 's|html_docs_source_dir = "build/default/html"|html_docs_source_dir = "html"|' wscript
 
